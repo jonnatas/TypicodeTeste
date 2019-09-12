@@ -12,7 +12,9 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -85,7 +87,13 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 Post newPost = new Post(title, body, 3);
-                Call<Post> call = retrofitConfig.createPost(newPost);
+                Map<String, String> fields = new HashMap<>();
+                fields.put("userId", "3");
+                fields.put("title", title);
+                fields.put("body", body);
+
+                Call<Post> call = retrofitConfig.createPost(fields);
+
                 call.enqueue(new Callback<Post>() {
                     @Override
                     public void onResponse(Call<Post> call, Response<Post> response) {
@@ -108,7 +116,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getAllPosts() {
-        Call<List<Post>> call = retrofitConfig.getAllPosts();
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("userId", "3");
+        parameters.put("_sort", "id");
+        parameters.put("_order", "desc");
+
+        Call<List<Post>> call = retrofitConfig.getUsersQueryMap(parameters);
+//        Call<List<Post>> call = retrofitConfig.getUsersPosts(new Integer[]{3, 4}, "id", "desc");
+//        Call<List<Post>> call = retrofitConfig.getPostByQuery(3, "id", "desc");
+//        Call<List<Post>> call = retrofitConfig.getAllPosts();
         call.enqueue(new Callback<List<Post>>() {
             @Override
             public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
